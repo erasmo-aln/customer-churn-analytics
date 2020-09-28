@@ -6,6 +6,12 @@ library(dplyr)
 library(ggplot2)
 library(plyr)
 library(tidyr)
+library(caret)
+library(party)
+library(randomForest)
+library(MASS)
+library(corrplot)
+library(gridExtra)
 
 # Import dataset
 dataset <- read_csv(file="Telco-Customer-Churn.csv")
@@ -104,7 +110,7 @@ for (i in cols){
   print(table(dataset[, c(i, 19)]))
 }
 
-new_dataset <- as.data.frame(dataset[, c(8:13, 19)])
+new_dataset <- as.data.frame(dataset[, c(-17, -18)])
 data_long <- tidyr::gather(new_dataset, key = type_col, value = categories, -Churn)
 
 ggplot(data_long, aes(x = categories, fill = Churn)) +
@@ -170,4 +176,66 @@ for (j in cols){
   results[j, ] <- c(coluna, teste[1], teste[3])
 }
 View(results)
+
+# Build Machine Learning models
+new_dataset <- dataset
+cols <- c(2:12, 14)
+for (k in cols){
+  new_dataset[[k]] <- as.factor(dataset[[k]])
+}
+
+dataset$Churn <- as.factor(mapvalues(dataset$Churn,
+                                             from=c("No", "Yes"),
+                                             to=c(0, 1)))
+dataset <- dataset[c(-1, -3, -4, -6)]
+intrain <- createDataPartition(as.factor(new_dataset$Churn), p=0.7,list=FALSE)
+train <- new_dataset[intrain, ]
+test <- new_dataset[-intrain, ]
+
+  # Logistic Regression
+logistic <- glm(Churn ~ ., family=binomial(link='logit'), data=train)
+print(summary(logistic))
+
+fitted.results <- predict(logistic, newdata=test,type='response')
+fitted.results <- ifelse(fitted.results > 0.5,1,0)
+misClasificError <- mean(fitted.results != test$Churn)
+print(paste('Logistic Regression Accuracy',1-misClasificError))
+print("Confusion Matrix Para Logistic Regression"); table(test$Churn, fitted.results > 0.5)
+exp(cbind(OR=coef(logistic), confint(logistic)))
+
+tree <- ctree(Churn ~ ., train)
+plot(tree, type='simple')
+pred_tree <- predict(tree, test)
+p1 <- predict(tree, train)
+tab1 <- table(Predicted = p1, Actual = train$Churn)
+tab2 <- table(Predicted = pred_tree, Actual = test$Churn)
+print(paste('Decision Tree Accuracy',sum(diag(tab2))/sum(tab2)))
+
+rfModel <- randomForest(Churn ~ ., data = train)
+pred_rf <- predict(rfModel, test)
+print("Confusion Matrix Para Random Forest"); table(test$Churn, pred_rf)
+varImpPlot(rfModel, sort=T, n.var = 10, main = 'Top 10 Feature Importance')
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

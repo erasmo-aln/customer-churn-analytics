@@ -34,3 +34,6 @@ vignettes/*.pdf
 # Temporary files created by R markdown
 *.utf8.md
 *.knit.md
+06-Big-Data-na-Pratica4.R
+07-Big-Data-na-Pratica4.pdf
+07-Big-Data-na-Pratica4.Rmd
