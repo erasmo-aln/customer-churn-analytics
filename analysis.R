@@ -179,63 +179,52 @@ View(results)
 
 # Build Machine Learning models
 new_dataset <- dataset
-cols <- c(2:12, 14)
+cols <- c(1, 2, 3, 4, 5)
 for (k in cols){
-  new_dataset[[k]] <- as.factor(dataset[[k]])
+  dataset[[k]] <- as.factor(dataset[[k]])
 }
 
 dataset$Churn <- as.factor(mapvalues(dataset$Churn,
                                              from=c("No", "Yes"),
                                              to=c(0, 1)))
-dataset <- dataset[c(-1, -3, -4, -6)]
-intrain <- createDataPartition(as.factor(new_dataset$Churn), p=0.7,list=FALSE)
-train <- new_dataset[intrain, ]
-test <- new_dataset[-intrain, ]
+dataset <- dataset[c(5, 8, 11, 14, 16, 17, 18)]
+intrain <- createDataPartition(as.factor(dataset$Churn), p=0.7,list=FALSE)
+train <- dataset[intrain, ]
+test <- dataset[-intrain, ]
 
   # Logistic Regression
-logistic <- glm(Churn ~ ., family=binomial(link='logit'), data=train)
-print(summary(logistic))
+lr <- glm(Churn ~ ., family=binomial(link='logit'), data=train)
+print(summary(lr))
 
-fitted.results <- predict(logistic, newdata=test,type='response')
-fitted.results <- ifelse(fitted.results > 0.5,1,0)
-misClasificError <- mean(fitted.results != test$Churn)
-print(paste('Logistic Regression Accuracy',1-misClasificError))
-print("Confusion Matrix Para Logistic Regression"); table(test$Churn, fitted.results > 0.5)
-exp(cbind(OR=coef(logistic), confint(logistic)))
+preds_lr <- predict(lr, newdata=test, type='response')
+preds_lr <- ifelse(preds_lr > 0.5, 1, 0)
 
+wrong_preds <- mean(preds_lr != test$Churn)
+
+print(paste('Logistic Regression Accuracy: ', signif((1-wrong_preds)*100, digits=4),'%', sep=""))
+print("Confusion Matrix Para Logistic Regression"); table(test$Churn, preds_lr > 0.5)
+
+  # Decision Tree
 tree <- ctree(Churn ~ ., train)
 plot(tree, type='simple')
-pred_tree <- predict(tree, test)
-p1 <- predict(tree, train)
-tab1 <- table(Predicted = p1, Actual = train$Churn)
-tab2 <- table(Predicted = pred_tree, Actual = test$Churn)
-print(paste('Decision Tree Accuracy',sum(diag(tab2))/sum(tab2)))
 
-rfModel <- randomForest(Churn ~ ., data = train)
-pred_rf <- predict(rfModel, test)
-print("Confusion Matrix Para Random Forest"); table(test$Churn, pred_rf)
-varImpPlot(rfModel, sort=T, n.var = 10, main = 'Top 10 Feature Importance')
+preds_tree <- predict(tree, test)
 
+confusion_tree <- table(Predicted = preds_tree, Actual = test$Churn)
+tree_acc <- sum(diag(confusion_tree))/sum(confusion_tree)
+print(paste('Decision Tree Accuracy: ', signif(tree_acc*100, digits=4), '%', sep=''))
 
+  # Random Forest
+rf <- randomForest(Churn ~ ., data = train)
+preds_rf <- predict(rfModel, test)
 
+confusion_rf <- table(Predicted=preds_rf, Actual=test$Churn)
+rf_acc <- sum(diag(confusion_rf))/sum(confusion_rf)
+print(paste('Random Forest Accuracy: ', signif(rf_acc*100, 4), '%', sep=''))
 
+varImpPlot(rf, sort=T, n.var = 10, main = 'Top 10 Feature Importance')
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+print("Summary")
+print(paste('Logistic Regression Accuracy: ', signif((1-wrong_preds)*100, digits=4),'%', sep=""))
+print(paste('Decision Tree Accuracy: ', signif(tree_acc*100, digits=4), '%', sep=''))
+print(paste('Random Forest Accuracy: ', signif(rf_acc*100, 4), '%', sep=''))

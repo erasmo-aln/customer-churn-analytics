@@ -47,3 +47,14 @@ Now I need to analyze column by column to check if it is categorical or quantita
 
 ### Step 5
 - After analysis of plots, I did a Chi-Squared table with all the data in relation to Churn. The results only reflects the previous analysis, showing that the gender are not relevant to Churn, as well as MultipleLines (yet much stronger than gender), the other variables showed high p-values, which means they are strong correlated to Churn, especially Tenure and Contract.
+
+### Step 6
+- Time to build ML models.
+- Logistic Regression: 78.94%
+- Decision Tree: 77.75%
+- Random Forest: 78.04%
+- After taking only the 6 more important features, the accuracies became:
+- Logistic Regression: 78.61%
+- Decision Tree: 77.7%
+- Random Forest: 64.09%
+- Doesn't changed too much in the lr and dt models, but affected a lot random forest. Based on that, it's better to keep all the variables and use the Logistic regression model.
