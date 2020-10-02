@@ -2,16 +2,11 @@ setwd("C:/Users/Erasmo/OneDrive/Projects/customer-churn-analytics")
 getwd()
 
 library(readr)
-library(dplyr)
-library(ggplot2)
 library(plyr)
-library(tidyr)
+library(ggplot2)
 library(caret)
 library(party)
 library(randomForest)
-library(MASS)
-library(corrplot)
-library(gridExtra)
 
 # Import dataset
 dataset <- read_csv(file="Telco-Customer-Churn.csv")
@@ -35,11 +30,18 @@ dataset <- dataset[-1]
 View(apply(dataset[, c(-5, -18, -19)], 2, unique))
 
 # Change values of SeniorCitizen to the pattern
-dataset$SeniorCitizen <- as.factor(mapvalues(dataset$SeniorCitizen,
+dataset$SeniorCitizen <- as.factor(mapvalues(dataset$SeniorCitizen, # plyr
                                              from=c(0, 1),
                                              to=c("No", "Yes")))
 
 # Change tenure values to categorical
+ggplot(dataset, aes(x=as.factor(tenure), fill=Churn)) +
+  geom_bar(position='fill')
+
+ggplot(dataset, aes(y=tenure, x="", fill=Churn)) + 
+  stat_boxplot(geom='errorbar') +
+  geom_boxplot()
+
 tvalues <- dataset$tenure
 tvalues[tvalues < 12] <- "< 1 year"
 tvalues[tvalues >= 12 & tvalues < 24] <- "1-2 years"
@@ -188,7 +190,7 @@ dataset$Churn <- as.factor(mapvalues(dataset$Churn,
                                              from=c("No", "Yes"),
                                              to=c(0, 1)))
 dataset <- dataset[c(5, 8, 11, 14, 16, 17, 18)]
-intrain <- createDataPartition(as.factor(dataset$Churn), p=0.7,list=FALSE)
+intrain <- createDataPartition(as.factor(dataset$Churn), p=0.7,list=FALSE) #caret
 train <- dataset[intrain, ]
 test <- dataset[-intrain, ]
 
@@ -205,7 +207,7 @@ print(paste('Logistic Regression Accuracy: ', signif((1-wrong_preds)*100, digits
 print("Confusion Matrix Para Logistic Regression"); table(test$Churn, preds_lr > 0.5)
 
   # Decision Tree
-tree <- ctree(Churn ~ ., train)
+tree <- ctree(Churn ~ ., train) #party
 plot(tree, type='simple')
 
 preds_tree <- predict(tree, test)
