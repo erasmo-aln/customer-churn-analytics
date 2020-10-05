@@ -32,7 +32,7 @@ Three models were used in the predictive modeling: Logistic Regression, Decision
 The dataset has 7043 rows and 23 columns. The column's description and their values are represented in the following table:
 
 | Column | Variable Type | Description | Values |
-| -----  | ------------- | ----------- | ------ |
+| -----  | :-------------: | ----------- | :------: |
 | CustomerId | Categorical/Nominal | Unique identification of each customer | 9999-XXXXX |
 | gender | Categorical/Binary | the customer's gender | Male, Female |
 | SeniorCitizen | Categorical/Binary | whether the customer is Senior or not | 0, 1 |
