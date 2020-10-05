@@ -22,10 +22,16 @@ Three models were used in the predictive modeling: Logistic Regression, Decision
 | Random Forest | 78.04% |
 
 ## Table of Contents
-- [Understanding the Data](#data)
-- [Data Cleaning](#clean)
-- [Exploratory Data Analysis](#eda)
-  - [Tenure Analysis](#tenure)
+- [customer-churn-analytics](#customer-churn-analytics)
+- [Customer Churn Analytics](#customer-churn-analytics-1)
+  - [Project Overview](#project-overview)
+  - [Table of Contents](#table-of-contents)
+  - [Understanding the Data](#understanding-the-data)
+  - [Data Cleaning](#data-cleaning)
+  - [Exploratory Data Analysis](#exploratory-data-analysis)
+    - [**Tenure Analysis**](#tenure-analysis)
+    - [**Personal Analysis**](#personal-analysis)
+      - [**Gender**](#gender)
 
 <a name="data"></a>
 ## Understanding the Data
@@ -81,10 +87,25 @@ As we saw before, maybe it's better to convert the **tenure** column into catego
 | 4-5 years | 48 to 59 |
 | >5 years | 60 to 72 |
 
+Now, let's analyze those categories instead discrete values:
 
+![tenure categories](images/barplot_tenure_categories.png)
 
+We still can see the negative trend across the categories, but it is now clearer where the problem lies. It is evident that the first year of service has the highest churn rate (almost 50%).
 
+<a name="personal"></a>
+### **Personal Analysis**
+This section will focus on those columns related to customer's information, which are: **gender**, **SeniorCitizen**, **Partner** and **Dependents**.  
+#### **Gender**
+The column **gender** has 2 possible values: *Male* or *Female*. The image below shows the churn rate for each gender:
 
+![gender churn](images/gender_churn.png)
+
+Apparently, there are no differences between the customer's gender. Let's analyze gender's churn rate grouped by tenure:
+
+![gender tenure](images/gender_tenure.png)
+
+There are very few differences between them, concluding that **gender** is not a significant factor to determine if the customer will leave or not the company.
 
 
 
