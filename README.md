@@ -1,5 +1,5 @@
-# Customer Churn Analytics
-## Project Overview
+# Customer Churn Analytics  <!-- omit in toc -->
+## Project Overview  <!-- omit in toc -->
 The goal of this project is to understand why people are leaving (or have left) the company, and how to predict that behavior for other customers. Churn Analytics is very important, because when you understand the people's behavior that leave your company, you can improve your service (or product) specifically to retain those customers, maximizing profit.  
 The dataset used is the [`Telco-Customer-Churn.csv`](Telco-Customer-Churn.csv), from a telecommunications company that contains data of more than 7000 customers.  
 Three models were used in the predictive modeling: Logistic Regression, Decision Tree and Random Forest. The resulting accuracies are in the following table:
@@ -10,16 +10,13 @@ Three models were used in the predictive modeling: Logistic Regression, Decision
 | Decision Tree | 77.75% |
 | Random Forest | 78.04% |
 
-## Table of Contents
-- [Customer Churn Analytics](#customer-churn-analytics)
-  - [Project Overview](#project-overview)
-  - [Table of Contents](#table-of-contents)
-  - [Understanding the Data](#understanding-the-data)
-  - [Data Cleaning](#data-cleaning)
-  - [Exploratory Data Analysis](#exploratory-data-analysis)
-    - [**Tenure Analysis**](#tenure-analysis)
-    - [**Personal Analysis**](#personal-analysis)
-      - [**Gender**](#gender)
+## Table of Contents  <!-- omit in toc -->
+- [Understanding the Data](#understanding-the-data)
+- [Data Cleaning](#data-cleaning)
+- [Exploratory Data Analysis](#exploratory-data-analysis)
+  - [**Tenure Analysis**](#tenure-analysis)
+  - [**Personal Analysis**](#personal-analysis)
+    - [**Gender**](#gender)
 
 <a name="data"></a>
 ## Understanding the Data
