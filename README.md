@@ -18,7 +18,7 @@ Three models were used in the predictive modeling: Logistic Regression, Decision
   - [Personal Analysis](#personal-analysis)
     - [Gender](#gender)
 
-<a name="data"></a>
+
 ## Understanding the Data
 The dataset has 7043 rows and 23 columns. The column's description and their values are represented in the following table:
 
@@ -78,7 +78,7 @@ Now, let's analyze those categories instead discrete values:
 
 We still can see the negative trend across the categories, but it is now clearer where the problem lies. It is evident that the first year of service has the highest churn rate (almost 50%).
 
-<a name="personal"></a>
+
 ### Personal Analysis
 This section will focus on those columns related to customer's information, which are: **gender**, **SeniorCitizen**, **Partner** and **Dependents**.  
 #### Gender
