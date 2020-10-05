@@ -26,9 +26,6 @@ View(dataset)
 # Remove CustomerID column
 dataset <- dataset[-1]
 
-# Check Unique values in columns (excluding numerical columns (5, 18, 19))
-View(apply(dataset[, c(-5, -18, -19)], 2, unique))
-
 # Change values of SeniorCitizen to the pattern
 dataset$SeniorCitizen <- as.factor(mapvalues(dataset$SeniorCitizen, # plyr
                                              from=c(0, 1),
