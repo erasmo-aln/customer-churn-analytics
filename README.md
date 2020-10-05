@@ -13,10 +13,10 @@ Three models were used in the predictive modeling: Logistic Regression, Decision
 ## Table of Contents  <!-- omit in toc -->
 - [Understanding the Data](#understanding-the-data)
 - [Data Cleaning](#data-cleaning)
-- [Exploratory Data Analysis](#exploratory-data-analysis)
-  - [**Tenure Analysis**](#tenure-analysis)
-  - [**Personal Analysis**](#personal-analysis)
-    - [**Gender**](#gender)
+- [Exploratory Data Analysis (EDA)](#exploratory-data-analysis-eda)
+  - [Tenure Analysis](#tenure-analysis)
+  - [Personal Analysis](#personal-analysis)
+    - [Gender](#gender)
 
 <a name="data"></a>
 ## Understanding the Data
@@ -41,16 +41,16 @@ The dataset has 7043 rows and 23 columns. The column's description and their val
 | TotalCharges | Quantitative/Continuous | the total charges since the customer entered in the company (in dollars) | 18.8 to 8684.8 |
 | Churn | Binary | whether the customer left the company or not | Yes, No |
 
-<a name="clean"></a>
+
 ## Data Cleaning
 - The dataset contains 11 NA values in the column **TotalCharges**. Considering that this is equivalent to *0.15%* of the total, these rows were removed, leaving 7032 remaining. *Obs: all 11 values ​​are from customers who are in the company for 0 months (new customers). We could keep those rows, but just 11 values won't be a problem, so we can delete them.*  
 - The column **CustomerId** is only an identifier, so it can be excluded.
 - All binary categorical variables are between *Yes/No*, so the **SeniorCitizen** was changed from *1/0* to *Yes/No* to keep the pattern.
 
-<a name="eda"></a>
-## Exploratory Data Analysis
-<a name="tenure"></a>
-### **Tenure Analysis**
+
+## Exploratory Data Analysis (EDA)
+
+### Tenure Analysis
 Before diving in each column, let's analyze the **tenure** column, that has quantitative values in it. The following image shows the proportion between the customer left the company or not for each value of tenure:
 
 ![barplot tenure](images/barplot_tenure.png)
@@ -79,9 +79,9 @@ Now, let's analyze those categories instead discrete values:
 We still can see the negative trend across the categories, but it is now clearer where the problem lies. It is evident that the first year of service has the highest churn rate (almost 50%).
 
 <a name="personal"></a>
-### **Personal Analysis**
+### Personal Analysis
 This section will focus on those columns related to customer's information, which are: **gender**, **SeniorCitizen**, **Partner** and **Dependents**.  
-#### **Gender**
+#### Gender
 The column **gender** has 2 possible values: *Male* or *Female*. The image below shows the churn rate for each gender:
 
 ![gender churn](images/gender_churn.png)
