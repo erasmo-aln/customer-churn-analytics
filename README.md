@@ -13,7 +13,14 @@
 ## Project Overview
 The goal of this project is to understand why people are leaving (or have left) the company, and how to predict that behavior for other customers. Churn Analytics is very important, because when you understand the people's behavior that leave your company, you can improve your service (or product) specifically to retain those customers, maximizing profit.  
 The dataset used is the [`Telco-Customer-Churn.csv`](Telco-Customer-Churn.csv), from a telecommunications company that contains data of more than 7000 customers.  
-Three models were used in the predictive modeling: Logistic Regression, Decision Tree and Random Forest. The accuracies reached 78.94%, 77.75% and 78.04%, respectively, which is a relatively good result.
+Three models were used in the predictive modeling: Logistic Regression, Decision Tree and Random Forest. The resulting accuracies are in the following table:
+
+| Model | Accuracy |
+| ----- | -------- |
+| Logistic Regression | 78.94% |
+| Decision Tree | 77.75% |
+| Random Forest | 78.04% |
+|||
 
 ## Table of Contents
 - [Understanding the Data](#data)
@@ -22,33 +29,37 @@ Three models were used in the predictive modeling: Logistic Regression, Decision
 
 <a name="data"></a>
 ## Understanding the Data
-The dataset has 7043 rows and 23 columns. The columns that have *character* types are *categorical* variables and the *numeric* columns will be specified:
-- **CustomerId** (*character*): unique identification of each customer.
-- **gender** (*character*): the customer's gender, either Male or Female.
-- **SeniorCitizen** (*numeric/categorical*): whether the customer is Senior or not (0 or 1).
-- **Partner** (*character*): whether the customer has a partner or not (Yes or No).
-- **Dependents** (*character*): whether the customer has dependents or not (Yes or No).
-- **tenure** (*numeric/discrete*): the number of months the customer has in the company.
-- **PhoneService** (*character*): whether the customer has phone service or not (Yes or No).
-- **MultipleLines** (*character*): whether the customer has multiple lines or not (Yes, No Phone Service or No).
-- **InternetService** (*character*): the type of internet the customer has (DSL, Fiber optic or No).
-- **OnlineSecurity, OnlineBackup, DeviceProtection, TechSupport, StreamingTV, StreamingMovies** (*character*): whether the customer has each service or not (Yes, No or No internet service).
-- **Contract** (*character*): the kind of contract (month-to-month, One year, Two year).
-- **PaperlessBilling** (*character*): whether the customer has paperless billing or not (Yes or No).
-- **PaymentMethod** (*character*): the method of payment (Electronic check, Mailed check, Bank transfer (automatic), Credit card (automatic)).
-- **MonthlyCharges** (*numeric/continuous*): the monthly charges in dollars.
-- **TotalCharges** (*numeric/continuous*): the total charges since the customer entered in the company.
-- **Churn** (*character*): whether the customer left the company or not (Yes or No).
+The dataset has 7043 rows and 23 columns. The column's description and their values are represented in the following table:
+
+| Column | Variable Type | Description | Values |
+| -----  | ------------- | ----------- | ------ |
+| CustomerId | Categorical/Nominal | Unique identification of each customer | 9999-XXXXX |
+| gender | Categorical/Binary | the customer's gender | Male, Female |
+| SeniorCitizen | Categorical/Binary | whether the customer is Senior or not | 0, 1 |
+| Partner | Categorical/Binary | whether the customer has a partner or not | Yes, No |
+| Dependents | Categorical/Binary | whether the customer has dependents or not | Yes, No |
+| tenure | Quantitative/Discrete | the number of months the customer has in the company | 0 to 72 |
+| PhoneService | Categorical/Binary | whether the customer has phone service or not | Yes, No |
+| MultipleLines | Categorical/Nominal | whether the customer has multiple lines or not | Yes, No, No Phone Service |
+| InternetService | Categorical/Nominal | the type of internet the customer has | DSL, Fiber optic, No |
+| OnlineSecurity, OnlineBackup, DeviceProtection, TechSupport, StreamingTV, StreamingMovies | Categorical/Nominal | whether the customer has each service or not | Yes, No, No Internet Service |
+| Contract | Categorical/Nominal | the type of contract | month-to-month, One year, Two year |
+| PaperlessBilling | Categorical/Binary | whether the customer has paperless billing or not | Yes, No |
+| PaymentMethod | Categorical/Nominal | the method of payment | Electronic check, Mailed check, Bank transfer (automatic), Credit card (automatic) |
+| MonthlyCharges | Quantitative/Continuous | the monthly charges in dollars | 18.25 to 118.75 |
+| TotalCharges | Quantitative/Continuous | the total charges since the customer entered in the company | 18.8 to 8684.8 |
+| Churn | Binary | whether the customer left the company or not | Yes, No |
 
 <a name="clean"></a>
 ## Data Cleaning
-- The dataset contains 11 NA values in the column **TotalCharges**. Considering that this is equivalent to *0.15%* of the total, these rows were removed, remaining 7032 rows.  
+- The dataset contains 11 NA values in the column **TotalCharges**. Considering that this is equivalent to *0.15%* of the total, these rows were removed, remaining 7032 rows. *Obs: all 11 values are from clients that has 0 months in the company (new clients). We could keep these rows, but just 11 values won't be a problem, so we can delete them.*  
 - The column **CustomerId** is only an identifier, so it can be excluded.
-- All categorical variables are *character* type, so the **SeniorCitizen** was changed from 1/0 to Yes/No to keep the pattern.
-- The tenure column can be converted to categorical too, but before we'll do some analysis on it.
+- All categorical variables are *character* type, so the **SeniorCitizen** was changed from *1/0* to *Yes/No* to keep the pattern.
 
 <a name="eda"></a>
-## Exploratory Data Analysis
+## Exploratory Data Analysis  
+
+
 
 
 
