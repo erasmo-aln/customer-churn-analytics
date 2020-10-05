@@ -17,6 +17,7 @@ Three models were used in the predictive modeling: Logistic Regression, Decision
   - [Tenure Analysis](#tenure-analysis)
   - [Personal Analysis](#personal-analysis)
     - [Gender](#gender)
+    - [Senior Citizen](#senior-citizen)
 
 
 ## Understanding the Data
@@ -78,7 +79,6 @@ Now, let's analyze those categories instead discrete values:
 
 We still can see the negative trend across the categories, but it is now clearer where the problem lies. It is evident that the first year of service has the highest churn rate (almost 50%).
 
-
 ### Personal Analysis
 This section will focus on those columns related to customer's information, which are: **gender**, **SeniorCitizen**, **Partner** and **Dependents**.  
 #### Gender
@@ -92,8 +92,16 @@ Apparently, there are no differences between the customer's gender. Let's analyz
 
 There are very few differences between them, concluding that **gender** is not a significant factor to determine if the customer will leave or not the company.
 
+#### Senior Citizen
+The churn rate if the customer is Senior or not is represented in the image below:
 
+![senior churn](images/senior_churn.png)
 
+Seeing that, we can see the difference between them, which indicates that this column could be useful to predict if the customer will leave or not. But this alone doesn't tell us too much, we need to analyze related to tenure too.
+
+![senior tenure](images/senior_tenure.png)
+
+According to this image, the churn rate of senior customers in the first year is above 62%, followed by more than 50% in the second year, which is really bad. The company definitely should investigate this issue.
 
 
 
