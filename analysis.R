@@ -33,10 +33,14 @@ dataset$SeniorCitizen <- as.factor(mapvalues(dataset$SeniorCitizen, # plyr
 
 # Change tenure values to categorical
 ggplot(dataset, aes(x=as.factor(tenure), fill=Churn)) +
+  xlab('') +
+  ylab('') +
   geom_bar(position='fill')
 
 ggplot(dataset, aes(y=tenure, x="", fill=Churn)) + 
   stat_boxplot(geom='errorbar') +
+  xlab('Churn') +
+  ylab('Tenure') +
   geom_boxplot()
 
 tvalues <- dataset$tenure
@@ -55,22 +59,37 @@ tenure_factor <- ordered(as.factor(dataset$tenure),
                          levels=tenure_levels)
 
 ggplot(dataset, aes(x=tenure_factor, fill=Churn)) +
-  geom_bar(position='dodge', col='black') +
+  geom_bar(position='fill', col='black') +
   xlab("") +
-  ylab("Total")
+  ylab("")
 
 # Analyze gender
+ggplot(dataset, aes(y=gender, fill=Churn)) +
+  geom_bar(position='fill', col='black') +
+  xlab('') +
+  ylab('')
+
 ggplot(dataset, aes(x=tenure_factor, fill=Churn)) +
-  geom_bar(position='dodge', col='black') +
+  geom_bar(position='fill', col='black') +
   facet_wrap(~gender) +
-  labs(fill="Time of Service")
+  xlab('') +
+  ylab('') +
+  labs(fill="Churn")
 
 # Analyze SeniorCitizen
 count(dataset$SeniorCitizen)
+table(dataset$SeniorCitizen, dataset$Churn)
+
+ggplot(dataset, aes(y=SeniorCitizen, fill=Churn)) +
+  geom_bar(position='fill', col='black') +
+  xlab('') +
+  ylab('')
+
 ggplot(dataset, aes(x=tenure_factor, fill=Churn)) +
-  geom_bar(position='dodge', col='black') +
+  geom_bar(position='fill', col='black') +
   facet_wrap(~SeniorCitizen) +
-  labs(fill="Time of Service")
+  xlab('') +
+  ylab('')
 
 # Analyze Family (Partner and Dependents)
 count(dataset$Partner)
