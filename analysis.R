@@ -78,7 +78,7 @@ ggplot(dataset, aes(x=tenure_factor, fill=Churn)) +
 
 # Analyze SeniorCitizen
 count(dataset$SeniorCitizen)
-table(dataset$SeniorCitizen, dataset$Churn)
+table(dataset$SeniorCitizen, dataset$tenure)
 
 ggplot(dataset, aes(y=SeniorCitizen, fill=Churn)) +
   geom_bar(position='fill', col='black') +
@@ -93,20 +93,54 @@ ggplot(dataset, aes(x=tenure_factor, fill=Churn)) +
 
 # Analyze Family (Partner and Dependents)
 count(dataset$Partner)
-ggplot(dataset, aes(x=tenure_factor, fill=Churn)) +
+table(dataset$Partner, dataset$tenure)
+
+ggplot(dataset, aes(y=Partner, fill=Churn)) +
+  geom_bar(position='fill', col='black') +
+  xlab('') +
+  ylab('')
+
+ggplot(dataset, aes(x=Partner, fill=Churn)) +
+  geom_bar(position='fill', col='black') +
+  facet_grid(~ordered(as.factor(dataset$tenure), 
+                      levels=tenure_levels)) +
+  xlab('') +
+  ylab('')
+
+ggplot(dataset, aes(x=Churn, fill=Partner)) +
   geom_bar(position='dodge', col='black') +
-  facet_wrap(~Partner) +
-  labs(fill="Time of Service")
+  facet_grid(~ordered(as.factor(dataset$tenure), 
+                      levels=tenure_levels)) +
+  xlab('Churn') +
+  ylab('')
 
 count(dataset$Dependents)
-ggplot(dataset, aes(x=tenure_factor, fill=Churn)) +
+table(dataset$Dependents, dataset$tenure)
+
+ggplot(dataset, aes(y=Dependents, fill=Churn)) +
+  geom_bar(position='fill', col='black') +
+  xlab('') +
+  ylab('')
+
+ggplot(dataset, aes(x=Churn, fill=Dependents)) +
   geom_bar(position='dodge', col='black') +
-  facet_wrap(~Dependents) +
-  labs(fill="Time of Service")
+  facet_grid(~~ordered(as.factor(dataset$tenure), 
+                       levels=tenure_levels)) +
+  xlab('') +
+  ylab('')
 
 # Analyze PhoneService and MultipleLines
-count(dataset, "PhoneService")
-count(dataset, "MultipleLines")
+count(dataset$PhoneService)
+ggplot(dataset, aes(y=PhoneService, fill=Churn)) +
+  geom_bar(position='fill', col='black') +
+  xlab('') +
+  ylab('')
+
+count(dataset$MultipleLines)
+ggplot(dataset, aes(y=MultipleLines, fill=Churn)) +
+  geom_bar(position='fill', col='black') +
+  xlab('') +
+  ylab('')
 
 dataset$PhoneService <- NULL
 

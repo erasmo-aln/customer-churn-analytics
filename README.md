@@ -18,6 +18,11 @@ Three models were used in the predictive modeling: Logistic Regression, Decision
   - [Personal Analysis](#personal-analysis)
     - [Gender](#gender)
     - [Senior Citizen](#senior-citizen)
+    - [Partner](#partner)
+    - [Dependents](#dependents)
+  - [Phone Services Analysis](#phone-services-analysis)
+    - [Phone Service and Multiple Lines](#phone-service-and-multiple-lines)
+  - [Internet Services](#internet-services)
 
 
 ## Understanding the Data
@@ -94,14 +99,48 @@ There are very few differences between them, concluding that **gender** is not a
 
 #### Senior Citizen
 The churn rate if the customer is Senior or not is represented in the image below:
-
 ![senior churn](images/senior_churn.png)
-
 Seeing that, we can see the difference between them, which indicates that this column could be useful to predict if the customer will leave or not. But this alone doesn't tell us too much, we need to analyze related to tenure too.
-
 ![senior tenure](images/senior_tenure.png)
-
 According to this image, the churn rate of senior customers in the first year is above 62%, followed by more than 50% in the second year, which is really bad. The company definitely should investigate this issue.
+
+#### Partner
+Let's take a look in the **Partner** distribution:
+![partner churn](images/partner_churn.png)
+We can see a difference there, saying that customers that don't have a partner tends to leave more than those who do. But we can't conclude that just because of this plot. Let's see that column grouped by tenure:
+![partner tenure](images/partner_tenure.png)
+Apparently, both situations are equally distributed across tenure, what indicates differences in quantity. Maybe there are more customers that don't have a partner within first year of service. Plotting this:
+![partner quantity](images/partner_quantity.png)
+Looking at this plot, we can see that in the first year, there are more customers without a partner, as we suspected. Therefore, this can add bias to our model in the predictive modeling because nothing but distribution indicates that having a partner or not affects the churn rate. Instead, this only supports the importance of **tenure** to churn.  
+*Obs: pay attention to the legend. The last plot is filled by Partner, not Churn.*
+
+#### Dependents
+The distribution in the **Dependents** column is:
+![dep churn](images/dep_churn.png)
+Again, customers that don't have dependents tend to leave more often. But this can be a difference in quantity again. Let's check it:
+![dep quantity](images/dep_quantity.png)
+The same thing that happened with **Partner**'s column, happens here: the 2 classes aren't well distributed throughout the tenure. The problem is that we know that **tenure** is significant to determine if the customer churn or not, so based on this difference in quantity on those 2 columns, this can lead to a error, when the model gives to much weight to these columns, when is the tenure that is affecting the churn.  
+In the predictive modeling step, we should keep an eye to these columns (**Partner** and **Dependents**) to see if we can improve accuracy deleting them.
+
+### Phone Services Analysis
+This section is about the columns **PhoneService** and **MultipleLines**.
+
+#### Phone Service and Multiple Lines
+The following table shows the distribution of the **PhoneServices** column:
+| Have Phone Service? | Quantity | Percent |
+| :-------------------: | :--------: | :-------: |
+| Yes | 6352 | 90.33% |
+| No | 680 | 9.67% |
+This column is highly unbalanced, but the churn rate for each value is basically equal, as we can see in the image below:
+![phone churn](images/phone_churn.png)
+Let's check the **MultipleLines** distribution:
+![multi churn](images/multiple.png)
+Basically, the same thing happened here, having or not these services don't affect that much in the churn rate. Again, those are 2 columns that could be excluded later.
+
+### Internet Services
+This section will analyze every Internet Services in the dataset, from **OnlineSecurity** to **StreamingMovies**. Starting with the presence or not of Internet Service, we have this distribution:
+
+
 
 
 
