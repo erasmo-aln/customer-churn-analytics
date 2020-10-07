@@ -127,10 +127,11 @@ This section is about the columns **PhoneService** and **MultipleLines**.
 
 #### Phone Service and Multiple Lines
 The following table shows the distribution of the **PhoneServices** column:
+
 | Have Phone Service? | Quantity | Percent |
 | :-------------------: | :--------: | :-------: |
 | Yes | 6352 | 90.33% |
-| No | 680 | 9.67% |  
+| No | 680 | 9.67% |
 
 This column is highly unbalanced, but the churn rate for each value is basically equal, as we can see in the image below:
 ![phone churn](images/phone_churn.png)
