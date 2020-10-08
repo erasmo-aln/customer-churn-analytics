@@ -23,6 +23,10 @@ Three models were used in the predictive modeling: Logistic Regression, Decision
   - [Phone Services Analysis](#phone-services-analysis)
     - [Phone Service and Multiple Lines](#phone-service-and-multiple-lines)
   - [Internet Services](#internet-services)
+    - [Online Security to Streaming Movies](#online-security-to-streaming-movies)
+  - [Payment Analysis](#payment-analysis)
+    - [Contract](#contract)
+    - [Paperless Billing](#paperless-billing)
 
 
 ## Understanding the Data
@@ -140,6 +144,29 @@ Basically, the same thing happened here, having or not these services don't affe
 
 ### Internet Services
 This section will analyze every Internet Services in the dataset, from **OnlineSecurity** to **StreamingMovies**. Starting with the presence or not of Internet Service, we have this distribution:
+![internet tenure](images/internet_tenure.png)
+Clearly, we can see that the *fiber optic* service has a problem, given the highest churn rate in all categories. If that behavior had happened only in the first year, probably would be a quantity issue again. But it repeats all over tenure categories, therefore having fiber optic definitely impacts on the churn outcome.  
+Also, customers that don't have any internet services have the lowest churn rate. Now we need to verify that churn rate across all services related to internet.
+
+#### Online Security to Streaming Movies
+The following plot shows the distribution of all these services:
+![internet services tenure](images/iserv_churn.png)
+Again, we can see that customers that don't have internet service have the lowest churn rate, in contrast to those that have internet but don't have separated services. But we can't take conclusion yet, because this can be a higher quantity of customers within the first year that don't have these services yet. Let's check for it:
+![first internet](images/first_internet.png)
+Indeed, all services have more customers within the first year, but that alone doesn't explain why customers that haven't these services tends to leave the company. The churn rate for this category (customers that don't have these services) is above 50% for every service. Apparently, customers that have these services or don't have internet at all tends to stay in the company. That could be a solution to this problem: the company could offer these services for a lower price for those customers, trying to retain them.  
+And for the fiber optic service, definitely the company should investigate that to improve it or fix any problems.
+
+### Payment Analysis
+This section will focus on payment methods and bill related variables, from **Contract** to **PaymentMethod**.
+
+#### Contract
+There are 3 options of contracts: *month-to-month*, *one year* and *two year*. Let's see how it is distributed:
+![contract tenure](images/contract.png)
+According to this plot, we can see that more the customer is in the company, he tends to sign *two year* contracts, and the churn rate are much lower. Also, a high quantity of customers in the first year tends to sign the monthly contract, what makes sense.  
+But this column looks more like a consequence than a cause to the churn problem. The dataset contains more newer customers and newer clients tends to leave more often, so the kind of contract it's just a consequence. One thing that supports that, it is the fast decrease on churn rate in the second year. But, just for precaution, it's not bad to investigate these customers and their services.
+
+#### Paperless Billing
+
 
 
 

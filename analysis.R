@@ -124,7 +124,7 @@ ggplot(dataset, aes(y=Dependents, fill=Churn)) +
 
 ggplot(dataset, aes(x=Churn, fill=Dependents)) +
   geom_bar(position='dodge', col='black') +
-  facet_grid(~~ordered(as.factor(dataset$tenure), 
+  facet_grid(~ordered(as.factor(dataset$tenure), 
                        levels=tenure_levels)) +
   xlab('') +
   ylab('')
@@ -142,49 +142,53 @@ ggplot(dataset, aes(y=MultipleLines, fill=Churn)) +
   xlab('') +
   ylab('')
 
-dataset$PhoneService <- NULL
-
 # Analyze InternetService
-ggplot(dataset, aes(x=tenure_factor, fill=Churn)) +
-  geom_bar(position="dodge", col="black") +
-  facet_wrap(~InternetService)
+table(dataset$InternetService, dataset$Churn)
 
-InternetAnalysis <- table(dataset$InternetService, dataset$Churn)
-ChurnInternet <- c(
-  InternetAnalysis[4]/(InternetAnalysis[1] + InternetAnalysis[4]),
-  InternetAnalysis[5]/(InternetAnalysis[2] + InternetAnalysis[5]),
-  InternetAnalysis[6]/(InternetAnalysis[3] + InternetAnalysis[6]))
-ChurnInternet
+ggplot(dataset, aes(x=InternetService, fill=Churn)) +
+  geom_bar(position="fill", col="black") +
+  facet_grid(~ordered(as.factor(dataset$tenure), 
+                      levels=tenure_levels)) +
+  xlab('') +
+  ylab('')
 
 # Analyze columns related to Internet Services
-cols <- seq(8, 13)
+library(gridExtra)
+
+cols <- seq(9, 14)
 for (i in cols){
-  print(table(dataset[, c(i, 19)]))
+  print(table(dataset[, c(i, 20)]))
 }
 
-new_dataset <- as.data.frame(dataset[, c(-17, -18)])
-data_long <- tidyr::gather(new_dataset, key = type_col, value = categories, -Churn)
+new_df <- dataset[, c(9:14, 20)]
+new_long <- tidyr::gather(new_df, key = type_col, value = categories, -Churn)
 
-ggplot(data_long, aes(x = categories, fill = Churn)) +
+first_year_df <- dataset[dataset$tenure == "< 1 year", c(9:14, 20)]
+first_year_long <- tidyr::gather(first_year_df, key = type_col, value = categories, -Churn)
+
+ggplot(new_long, aes(x = categories, fill = Churn)) +
+  geom_bar(position='dodge', col='black') + 
+  facet_wrap(~ type_col, scales = "free_x")
+
+ggplot(first_year_long, aes(x = categories, fill = Churn)) +
   geom_bar(position='dodge', col='black') + 
   facet_wrap(~ type_col, scales = "free_x")
 
 # Analyzing Contract
-ggplot(dataset, aes(x=Churn, fill=tenure_factor)) +
+ggplot(dataset, aes(x=Contract, fill=Churn)) +
   geom_bar(position='dodge', col='black') +
-  facet_wrap(~Contract) +
-  labs(fill="Time of Service")
-
-ggplot(dataset, aes(x=tenure_factor, fill=Churn)) +
-  geom_bar(position='dodge', col='black') +
-  facet_wrap(~Contract) +
-  labs(fill="Time of Service")
+  facet_grid(~ordered(as.factor(dataset$tenure), 
+                      levels=tenure_levels)) +
+  xlab('') +
+  ylab('')
 
 # Analyze Paperless Billing
-ggplot(dataset, aes(x=Churn, fill=tenure_factor)) +
+ggplot(dataset, aes(x=PaperlessBilling, fill=Churn)) +
   geom_bar(position='dodge', col='black') +
-  facet_wrap(~PaperlessBilling) +
-  labs(title='Paperless Billing', fill="Time of Service")
+  facet_grid(~ordered(as.factor(dataset$tenure), 
+                      levels=tenure_levels)) +
+  xlab('') +
+  ylab('')
 
 ggplot(dataset, aes(x=tenure_factor, fill=Churn)) +
   geom_bar(position='dodge', col='black') +
@@ -231,7 +235,7 @@ View(results)
 
 # Build Machine Learning models
 new_dataset <- dataset
-cols <- c(1, 2, 3, 4, 5)
+cols <- c(1, 3:17)
 for (k in cols){
   dataset[[k]] <- as.factor(dataset[[k]])
 }
@@ -239,22 +243,41 @@ for (k in cols){
 dataset$Churn <- as.factor(mapvalues(dataset$Churn,
                                              from=c("No", "Yes"),
                                              to=c(0, 1)))
-dataset <- dataset[c(5, 8, 11, 14, 16, 17, 18)]
+dataset <- dataset[c(2, 3, 4, 11, 13, 14, 15)]
 intrain <- createDataPartition(as.factor(dataset$Churn), p=0.7,list=FALSE) #caret
 train <- dataset[intrain, ]
 test <- dataset[-intrain, ]
+
+dataset$gender <- NULL
+dataset$Partner <- NULL
+dataset$Dependents <- NULL
+dataset$MultipleLines <- NULL
 
   # Logistic Regression
 lr <- glm(Churn ~ ., family=binomial(link='logit'), data=train)
 print(summary(lr))
 
 preds_lr <- predict(lr, newdata=test, type='response')
-preds_lr <- ifelse(preds_lr > 0.5, 1, 0)
+preds_lr <- ifelse(preds_lr > 0.3, 1, 0)
 
 wrong_preds <- mean(preds_lr != test$Churn)
+confusion_lr <- table(test$Churn, preds_lr)
 
-print(paste('Logistic Regression Accuracy: ', signif((1-wrong_preds)*100, digits=4),'%', sep=""))
-print("Confusion Matrix Para Logistic Regression"); table(test$Churn, preds_lr > 0.5)
+lr_acc <- signif((1-wrong_preds)*100, digits=4)
+lr_rec <- signif((confusion_lr[4]/(confusion_lr[2] + confusion_lr[4]))*100, digits=4)
+lr_pre <- signif((confusion_lr[4]/(confusion_lr[3] + confusion_lr[4]))*100, digits=4)
+lr_f1 <- signif((2*(lr_pre*lr_rec)/(lr_pre + lr_rec)), digits=4)
+
+results <- data.frame(Model=c('Logistic Regression'), Accuracy=c(lr_acc),
+                      Precision=c(lr_pre), Recall=c(lr_rec),
+                      `F1 Score`=c(lr_f1))
+
+print(paste('LR Accuracy: ', lr_acc, '%', sep=""))
+print(paste('LR Precision: ', lr_pre, '%', sep=''))
+print(paste('LR Recall: ', lr_rec, '%', sep=''))
+print(paste('LR F1 Score: ', lr_f1, '%', sep=''))
+
+print("Confusion Matrix Para Logistic Regression"); confusion_lr
 
   # Decision Tree
 tree <- ctree(Churn ~ ., train) #party
@@ -268,7 +291,7 @@ print(paste('Decision Tree Accuracy: ', signif(tree_acc*100, digits=4), '%', sep
 
   # Random Forest
 rf <- randomForest(Churn ~ ., data = train)
-preds_rf <- predict(rfModel, test)
+preds_rf <- predict(rf, test)
 
 confusion_rf <- table(Predicted=preds_rf, Actual=test$Churn)
 rf_acc <- sum(diag(confusion_rf))/sum(confusion_rf)
