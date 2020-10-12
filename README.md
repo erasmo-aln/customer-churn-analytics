@@ -27,6 +27,12 @@ Three models were used in the predictive modeling: Logistic Regression, Decision
   - [Payment Analysis](#payment-analysis)
     - [Contract](#contract)
     - [Paperless Billing](#paperless-billing)
+    - [Payment Method](#payment-method)
+  - [Charges Analysis](#charges-analysis)
+  - [Chi-Squared Test](#chi-squared-test)
+  - [Predictive Modeling](#predictive-modeling)
+    - [Evaluation Metrics](#evaluation-metrics)
+    - [Logistic Regression](#logistic-regression)
 
 
 ## Understanding the Data
@@ -167,6 +173,65 @@ According to this plot, we can see that more the customer is in the company, he 
 But this column looks more like a consequence than a cause to the churn problem. The dataset contains more newer customers and newer clients tends to leave more often, so the kind of contract it's just a consequence. One thing that supports that, it is the fast decrease on churn rate in the second year. But, just for precaution, it's not bad to investigate these customers and their services.
 
 #### Paperless Billing
+There are a option to have paperless billing or not, plotting this distribution grouped by tenure:
+![paperless tenure](images/paperless_tenure.png)
+According to this image, every tenure category has the same behavior: customers that have paperless billing tends to leave more often than those who haven't. So, definitely this is a variable we want to keep.
+
+#### Payment Method
+There are 4 kinds of payment methods: *Bank transfer (automatic)*, *Credit card (automatic)*, *Electronic check* and *Mailed check*. They are evenly distributed, except for *electronic check* which has a little more customers. The image below shows the distribution filled by **Churn**:
+![payment method](images/paymentmethod.png)
+Where *BT* are *Bank transfer*, *CC* is *Credit Card*, *EC* is *Electronic Check* and *MC* is *Mailed Check*. It is visible that customers that have *electronic check* as their payment method, also have the highest churn rate in every tenure category, which should be a significant factor to predict the **Churn**. The other methods are very similar, except for *Mailed Check* that has the lowest churn rate. 
+
+### Charges Analysis
+This section will focus on the 2 numerical columns: **MonthlyCharges** and **TotalCharges**. The scatter plot below shows the relationship between the monthly charges and total charges:
+![charges](images/charges.png)
+We can see different 'columns' on that scatterplot showing some different service plans. Also, we can see a linear relationship between the variables, that is, when monthly charges increases, total charges also increases in a linear manner, the same occurs with time: increasing tenure time, also increases the total charges.  
+Therefore, if these 2 variables are related to each other, that makes no sense to keep them together. **MonthlyCharges** apparently represents better the customer's behavior, so **TotalCharges** will be deleted. The image below shows the distribution of monthly charges:
+![monthly charges](images/monthlycharges.png)
+This histogram shows interesting behaviors. It's visible that the churn rate is high in every facet when the charges 'moves' to the right (becomes more expensive). In the first year, this range is between 60 and 90, becoming between 90 and 110 after 5 years in the company. Maybe this is related to additional services, that we saw that could be causing this churn. Anyway, this is an specific range and should be investigated for sure.
+
+### Chi-Squared Test
+Before building the models to predict the Churn, let's see the correlations between variables and the outcome using the chi-squared test. Basically, if the p-value is lower than 0.05, it means the variables are dependent (the other one being the churn). The following table shows all p-values:
+
+| Column | p-value |
+| ------ | ------- |
+| gender | **4.904885e-01** | 
+| SeniorCitizen | 2.479256e-36 |
+| Partner | 3.973798e-36 |
+| Dependents | 2.019659e-42 |
+| tenure | 4.119229e-192 |
+| PhoneService | **3.499240e-01** |
+| MultipleLines | **3.567927e-03** |
+| InternetService | 5.831199e-159 |
+| OnlineSecurity | 1.400687e-184 |
+| OnlineBackup | 7.776099e-131 |
+| DeviceProtection | 1.959389e-121 |
+| TechSupport | 7.407808e-180 |
+| StreamingTV | 1.324641e-81 |
+| StreamingMovies | 5.353560e-82 |
+| Contract | 7.326182e-257 |
+| PaperlessBilling | 8.236203e-58 |
+| PaymentMethod | 1.426310e-139 |
+
+The bold values are the ones closer to the significance level (0.05). As we can see, the **gender**, **PhoneService** and **MultipleLines** are barely significant to the Churn. And other columns like **Partner** and **Dependents** that probably it's a tenure problem, shows a low p-value, which means they are relevant to Churn (looking purely to this test).
+
+### Predictive Modeling
+Before diving in the models, we need to prepare the dataset. There are 3 things to do:
+- Delete **TotalCharges** column;
+- Convert *character* columns to *factor*;
+- Change **Churn** values from *No* to 0 and *Yes* to 1;
+- Split the dataset into *training* and *test* sets (70/30 split).
+
+After that, we'll take 2 paths: the first one is to use only the relevant columns according to the chi-squared test. The second path we'll use only relevant columns based on our previous analysis and compare the results.
+
+There will be used 3 different models: *Logistic Regression*, *Decision Tree* and *Random Forest*.
+
+#### Evaluation Metrics
+
+
+#### Logistic Regression
+For the first attempt, the columns **gender**, **PhoneService** and **MultipleLines** were excluded. Using a threshold of 0.5, the result was:
+
 
 
 

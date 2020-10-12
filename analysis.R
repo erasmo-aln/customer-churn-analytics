@@ -184,58 +184,56 @@ ggplot(dataset, aes(x=Contract, fill=Churn)) +
 
 # Analyze Paperless Billing
 ggplot(dataset, aes(x=PaperlessBilling, fill=Churn)) +
-  geom_bar(position='dodge', col='black') +
+  geom_bar(position='fill', col='black') +
   facet_grid(~ordered(as.factor(dataset$tenure), 
                       levels=tenure_levels)) +
   xlab('') +
   ylab('')
 
-ggplot(dataset, aes(x=tenure_factor, fill=Churn)) +
-  geom_bar(position='dodge', col='black') +
-  facet_wrap(~PaperlessBilling) +
-  labs(title='Paperless Billing', fill="Time of Service")
-
 # Analyze Payment Method
-ggplot(dataset, aes(x=Churn, fill=tenure_factor)) +
-  geom_bar(position='dodge', col='black') +
-  facet_wrap(~PaymentMethod) +
-  labs(fill="Time of Service")
-
-ggplot(dataset, aes(x=tenure_factor, y=fill=Churn)) +
-  geom_bar(position='dodge', col='black') +
-  facet_wrap(~PaymentMethod) +
-  labs(fill="Time of Service")
+ggplot(dataset, aes(x=PaymentMethod, fill=Churn)) +
+  geom_bar(position='fill', col='black') +
+  facet_grid(~ordered(as.factor(dataset$tenure), 
+                      levels=tenure_levels)) +
+  scale_x_discrete(labels=c('BT', 'CC', 'EC', 'MC')) +
+  xlab('') +
+  ylab('')
 
 # Analyze Charges
+ggplot(dataset, aes(x=MonthlyCharges, y=TotalCharges, color=tenure_factor)) +
+  geom_point() +
+  xlab('') +
+  ylab('') +
+  labs(color='Tenure Category')
+
+
 ggplot(dataset, aes(x=MonthlyCharges, fill=Churn)) +
   geom_histogram(bins=20, col='black') +
-  facet_wrap(~ordered(as.factor(tenure),
+  facet_grid(~ordered(as.factor(tenure),
             levels=tenure_levels), scales="free_x") +
   labs(fill="Churn")
 
-ggplot(dataset, aes(x=TotalCharges, fill=Churn)) +
-  geom_histogram(bins=20, col='black') +
-  facet_wrap(~ordered(as.factor(tenure),
-            levels=tenure_levels), scales="free_x") +
-  labs(fill="Churn")
-
-dataset$TotalCharges <- NULL
 View(dataset)
 
 # See Correlations between categories and Churn
-cols <- seq(1:16)
+cols <- seq(1:17)
 results <- data.frame(Column=character(), `X-Squared`=double(),
                       `p-value`=double(), stringsAsFactors = FALSE)
 for (j in cols){
-  coluna <- colnames(new_dataset[j])
-  teste <- chisq.test(as.factor(new_dataset[[j]]), as.factor(dataset[["Churn"]]))
+  coluna <- colnames(dataset[j])
+  teste <- chisq.test(as.factor(dataset[[j]]), as.factor(dataset[["Churn"]]))
   results[j, ] <- c(coluna, teste[1], teste[3])
 }
+
 View(results)
 
 # Build Machine Learning models
-new_dataset <- dataset
-cols <- c(1, 3:17)
+dataset$TotalCharges <- NULL
+dataset$gender <- NULL
+dataset$PhoneService <- NULL
+dataset$MultipleLines <- NULL
+
+cols <- c(2:14)
 for (k in cols){
   dataset[[k]] <- as.factor(dataset[[k]])
 }
@@ -243,15 +241,10 @@ for (k in cols){
 dataset$Churn <- as.factor(mapvalues(dataset$Churn,
                                              from=c("No", "Yes"),
                                              to=c(0, 1)))
-dataset <- dataset[c(2, 3, 4, 11, 13, 14, 15)]
-intrain <- createDataPartition(as.factor(dataset$Churn), p=0.7,list=FALSE) #caret
-train <- dataset[intrain, ]
-test <- dataset[-intrain, ]
 
-dataset$gender <- NULL
-dataset$Partner <- NULL
-dataset$Dependents <- NULL
-dataset$MultipleLines <- NULL
+intrain <- createDataPartition(as.factor(dataset$Churn), p=0.7, list=FALSE) #caret
+train <- dataset[c(intrain), ]
+test <- dataset[c(-intrain), ]
 
   # Logistic Regression
 lr <- glm(Churn ~ ., family=binomial(link='logit'), data=train)
