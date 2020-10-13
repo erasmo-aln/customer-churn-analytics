@@ -254,16 +254,19 @@ preds_lr <- predict(lr, newdata=test, type='response')
 preds_lr <- ifelse(preds_lr > 0.3, 1, 0)
 
 wrong_preds <- mean(preds_lr != test$Churn)
-confusion_lr <- table(test$Churn, preds_lr)
+confusion_lr <- table(Actual=test$Churn, Predicted=preds_lr)
+confusion_lr
 
 lr_acc <- signif((1-wrong_preds)*100, digits=4)
 lr_rec <- signif((confusion_lr[4]/(confusion_lr[2] + confusion_lr[4]))*100, digits=4)
 lr_pre <- signif((confusion_lr[4]/(confusion_lr[3] + confusion_lr[4]))*100, digits=4)
 lr_f1 <- signif((2*(lr_pre*lr_rec)/(lr_pre + lr_rec)), digits=4)
 
-results <- data.frame(Model=c('Logistic Regression'), Accuracy=c(lr_acc),
-                      Precision=c(lr_pre), Recall=c(lr_rec),
-                      `F1 Score`=c(lr_f1))
+results_lr <- data.frame(Model='Logistic Regression',
+                         Accuracy=lr_acc,
+                         Precision=lr_pre,
+                         Recall=lr_rec,
+                         `F1 Score`=lr_f1)
 
 print(paste('LR Accuracy: ', lr_acc, '%', sep=""))
 print(paste('LR Precision: ', lr_pre, '%', sep=''))
@@ -276,12 +279,26 @@ print("Confusion Matrix Para Logistic Regression"); confusion_lr
 tree <- ctree(Churn ~ ., train) #party
 plot(tree, type='simple')
 
-preds_tree <- predict(tree, test)
+preds_tree <- predict(tree, test, type='p')
+preds_tree <- sapply(preds_tree, `[`, 2)
+preds_tree <- ifelse(preds_tree > 0.5, 1, 0)
 
-confusion_tree <- table(Predicted = preds_tree, Actual = test$Churn)
-tree_acc <- sum(diag(confusion_tree))/sum(confusion_tree)
-print(paste('Decision Tree Accuracy: ', signif(tree_acc*100, digits=4), '%', sep=''))
+View(preds_tree)
 
+confusion_tree <- table(Actual = test$Churn, Predicted = preds_tree)
+confusion_tree
+
+tree_acc <- signif((sum(diag(confusion_tree))/sum(confusion_tree))*100, digits=4)
+tree_rec <- signif((confusion_tree[4]/(confusion_tree[2] + confusion_tree[4]))*100, digits=4)
+tree_pre <- signif((confusion_tree[4]/(confusion_tree[3] + confusion_tree[4]))*100, digits=4)
+tree_f1 <- signif((2*(tree_pre*tree_rec)/(tree_pre + tree_rec)), digits=4)
+
+results_tree <- data.frame(Model='Decision Tree',
+                           Accuracy=tree_acc,
+                           Recall=tree_rec,
+                           Precision=tree_pre,
+                           `F1 Score`=tree_f1)
+results_tree
   # Random Forest
 rf <- randomForest(Churn ~ ., data = train)
 preds_rf <- predict(rf, test)

@@ -33,6 +33,7 @@ Three models were used in the predictive modeling: Logistic Regression, Decision
   - [Predictive Modeling](#predictive-modeling)
     - [Evaluation Metrics](#evaluation-metrics)
     - [Logistic Regression](#logistic-regression)
+    - [Decision Tree](#decision-tree)
 
 
 ## Understanding the Data
@@ -227,11 +228,28 @@ After that, we'll take 2 paths: the first one is to use only the relevant column
 There will be used 3 different models: *Logistic Regression*, *Decision Tree* and *Random Forest*.
 
 #### Evaluation Metrics
-
+To decide which evaluation metric we'll use, we need to understand the problem first. The company want to retain as many customers they can, increasing profit and customer's satisfaction, so we need to predict correctly customers that would leave, that way we can retain them. Basically we have 3 evaluation metrics that we can use: **Accuracy**, **Precision** and **Recall**.  
+- Accuracy in this context means that we are getting the predictions right, both for customers that would churn or not. Therefore, higher the accuracy, better for us.  
+- Precision means of all positive predictions, how many we got it right. A high precision in this case, could be converted in more satisfied customers, so we want to keep that high.
+- Recall is about the actual customers that would leave. How many of them we predicted right, and how many we predicted that them wouldn't leave. So, definitely we need to keep recall high enough, because we don't want to predict positive customers as negatives.  
+And finally, there is the **F1 Score**, which is a combination of **Precision** and **Recall**, so instead of maximizing two separate scores, we can try to maximize only one depending on the case.  
 
 #### Logistic Regression
 For the first attempt, the columns **gender**, **PhoneService** and **MultipleLines** were excluded. Using a threshold of 0.5, the result was:
 
+| Accuracy | Precision | Recall | F1 Score |
+| -------- | --------- | ------ | -------- |
+| 80.88% | 68.82% | 51.25% | 58.75% |
+
+The dataset is highly unbalanced in respect to Churn, that way the model tends to classify the new observations as the majority class (in this case, churn as 'No'). Moving the threshold to 0.3, we got:
+
+| Accuracy | Precision | Recall | F1 Score |
+| -------- | --------- | ------ | -------- |
+| 76.71% | 54.38% | 76.43% | 63.55% |
+
+The accuracy is still good, but the precision now is near 50%, which means that of all our positive predictions we hit it only half of them. In contrast the Recall was 76%, which is relatively good, because of all *positive* customers, we hit it almost 80% of them. There are 560 customers with positive Churn on the test set and this last model got it right for 428 of them. Maybe the company would low the charges, add some bonus services, directed marketing campaigns for these predicted customers, that way this low precision shouldn't hurt the company at all.
+
+#### Decision Tree
 
 
 
