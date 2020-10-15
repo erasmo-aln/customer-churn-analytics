@@ -2,13 +2,13 @@
 ## Project Overview  <!-- omit in toc -->
 The goal of this project is to understand why people are leaving (or have left) the company, and how to predict that behavior for other customers. Churn Analytics is very important, because when you understand the people's behavior that leave your company, you can improve your service (or product) specifically to retain those customers, maximizing profit.  
 The dataset used is the [`Telco-Customer-Churn.csv`](Telco-Customer-Churn.csv), from a telecommunications company that contains data of more than 7000 customers.  
-Three models were used in the predictive modeling: Logistic Regression, Decision Tree and Random Forest. The resulting accuracies are in the following table:
+Three models were used in the predictive modeling: Logistic Regression, Decision Tree and Random Forest. The resulting metrics are in the following table:
 
-| Model | Accuracy |
-| ----- | -------- |
-| Logistic Regression | 78.94% |
-| Decision Tree | 77.75% |
-| Random Forest | 78.04% |
+| Model | Accuracy | Precision | Recall | F1 Score |
+| :---: | :------: | :-------: | :----: | :------: |
+| Logistic Regression | 76.71% | 54.38% | 76.43% | 63.55% |
+| Decision Tree | 76.14% | 53.91% | 70.18% | 60.98% |
+| Random Forest | 77.23% | 55.63% | 70.54% | 62.2% |
 
 ## Table of Contents  <!-- omit in toc -->
 - [Understanding the Data](#understanding-the-data)
@@ -30,10 +30,13 @@ Three models were used in the predictive modeling: Logistic Regression, Decision
     - [Payment Method](#payment-method)
   - [Charges Analysis](#charges-analysis)
   - [Chi-Squared Test](#chi-squared-test)
-  - [Predictive Modeling](#predictive-modeling)
-    - [Evaluation Metrics](#evaluation-metrics)
-    - [Logistic Regression](#logistic-regression)
-    - [Decision Tree](#decision-tree)
+- [Predictive Modeling](#predictive-modeling)
+  - [Evaluation Metrics](#evaluation-metrics)
+  - [Logistic Regression](#logistic-regression)
+  - [Decision Tree](#decision-tree)
+  - [Random Forest](#random-forest)
+  - [Summary](#summary)
+- [Conclusion](#conclusion)
 
 
 ## Understanding the Data
@@ -64,19 +67,14 @@ The dataset has 7043 rows and 23 columns. The column's description and their val
 - The column **CustomerId** is only an identifier, so it can be excluded.
 - All binary categorical variables are between *Yes/No*, so the **SeniorCitizen** was changed from *1/0* to *Yes/No* to keep the pattern.
 
-
 ## Exploratory Data Analysis (EDA)
 
 ### Tenure Analysis
 Before diving in each column, let's analyze the **tenure** column, that has quantitative values in it. The following image shows the proportion between the customer left the company or not for each value of tenure:
-
 ![barplot tenure](images/barplot_tenure.png)
-
 Clearly, the longer the customer's time in the company, the lower the churn rate (left the company). But what we can see from this image is that the difference from one month to the next is small (although the trend is very clear), so this column could be converted into a categorical variable separated by years in the company.  
 Another analysis that we can do on the **tenure** column is to show the range of people who left and stayed in the company. The next image shows that in a boxplot:
-
 ![boxplot tenure](images/boxplot_tenure.png)
-
 The boxplot shows us that 50% of customers left the company before or equal to 10 months (look the median on the blue box). The rest of them are distributed between 10 and 72, which is way more sparse. So, this is definitely a good problem to focus on.  
 As we saw before, maybe it's better to convert the **tenure** column into categorical variables. So, it'll be divided into 6 categories, which are:
 
@@ -90,22 +88,17 @@ As we saw before, maybe it's better to convert the **tenure** column into catego
 | >5 years | 60 to 72 |
 
 Now, let's analyze those categories instead discrete values:
-
 ![tenure categories](images/barplot_tenure_categories.png)
-
 We still can see the negative trend across the categories, but it is now clearer where the problem lies. It is evident that the first year of service has the highest churn rate (almost 50%).
 
 ### Personal Analysis
-This section will focus on those columns related to customer's information, which are: **gender**, **SeniorCitizen**, **Partner** and **Dependents**.  
+This section will focus on those columns related to customer's information, which are: **gender**, **SeniorCitizen**, **Partner** and **Dependents**.
+
 #### Gender
 The column **gender** has 2 possible values: *Male* or *Female*. The image below shows the churn rate for each gender:
-
 ![gender churn](images/gender_churn.png)
-
 Apparently, there are no differences between the customer's gender. Let's analyze gender's churn rate grouped by tenure:
-
 ![gender tenure](images/gender_tenure.png)
-
 There are very few differences between them, concluding that **gender** is not a significant factor to determine if the customer will leave or not the company.
 
 #### Senior Citizen
@@ -216,7 +209,7 @@ Before building the models to predict the Churn, let's see the correlations betw
 
 The bold values are the ones closer to the significance level (0.05). As we can see, the **gender**, **PhoneService** and **MultipleLines** are barely significant to the Churn. And other columns like **Partner** and **Dependents** that probably it's a tenure problem, shows a low p-value, which means they are relevant to Churn (looking purely to this test).
 
-### Predictive Modeling
+## Predictive Modeling
 Before diving in the models, we need to prepare the dataset. There are 3 things to do:
 - Delete **TotalCharges** column;
 - Convert *character* columns to *factor*;
@@ -227,32 +220,57 @@ After that, we'll take 2 paths: the first one is to use only the relevant column
 
 There will be used 3 different models: *Logistic Regression*, *Decision Tree* and *Random Forest*.
 
-#### Evaluation Metrics
+### Evaluation Metrics
 To decide which evaluation metric we'll use, we need to understand the problem first. The company want to retain as many customers they can, increasing profit and customer's satisfaction, so we need to predict correctly customers that would leave, that way we can retain them. Basically we have 3 evaluation metrics that we can use: **Accuracy**, **Precision** and **Recall**.  
 - Accuracy in this context means that we are getting the predictions right, both for customers that would churn or not. Therefore, higher the accuracy, better for us.  
 - Precision means of all positive predictions, how many we got it right. A high precision in this case, could be converted in more satisfied customers, so we want to keep that high.
 - Recall is about the actual customers that would leave. How many of them we predicted right, and how many we predicted that them wouldn't leave. So, definitely we need to keep recall high enough, because we don't want to predict positive customers as negatives.  
 And finally, there is the **F1 Score**, which is a combination of **Precision** and **Recall**, so instead of maximizing two separate scores, we can try to maximize only one depending on the case.  
 
-#### Logistic Regression
+### Logistic Regression
 For the first attempt, the columns **gender**, **PhoneService** and **MultipleLines** were excluded. Using a threshold of 0.5, the result was:
 
 | Accuracy | Precision | Recall | F1 Score |
-| -------- | --------- | ------ | -------- |
+| :------: | :-------: | :----: | :------: |
 | 80.88% | 68.82% | 51.25% | 58.75% |
 
 The dataset is highly unbalanced in respect to Churn, that way the model tends to classify the new observations as the majority class (in this case, churn as 'No'). Moving the threshold to 0.3, we got:
 
 | Accuracy | Precision | Recall | F1 Score |
-| -------- | --------- | ------ | -------- |
+| :------: | :-------: | :----: | :------: |
 | 76.71% | 54.38% | 76.43% | 63.55% |
 
 The accuracy is still good, but the precision now is near 50%, which means that of all our positive predictions we hit it only half of them. In contrast the Recall was 76%, which is relatively good, because of all *positive* customers, we hit it almost 80% of them. There are 560 customers with positive Churn on the test set and this last model got it right for 428 of them. Maybe the company would low the charges, add some bonus services, directed marketing campaigns for these predicted customers, that way this low precision shouldn't hurt the company at all.
 
-#### Decision Tree
+### Decision Tree
+Using the Decision Tree algorithm, we got the following results, both for a threshold of 0.5 and 0.3:
 
+| Threshold | Accuracy | Precision | Recall | F1 Score |
+| :-------: | :------: | :-------: | :----: | :------: |
+| 0.5 | 78.94% | 64.08% | 47.14% | 54.32% |
+| 0.3 | 76.14% | 53.91% | 70.18% | 60.98% |
 
+Again, using a lower threshold gave us better results, considering that we want to maximize the *Recall*, as well as *F1 Score*. Only changing the threshold we increased the *Recall* by 23%, not affecting that much the *Precision* (near 10%) and also improving the *F1 Score* by 6%, which is good.
 
+### Random Forest
+The Random Forest algorithm gave us the following results:
 
+| Threshold | Accuracy | Precision | Recall | F1 Score |
+| :-------: | :------: | :-------: | :----: | :------: |
+| 0.5 | 79.41% | 65.22% | 48.21% | 55.44% |
+| 0.3 | 77.23% | 55.63% | 70.54% | 62.2% |
 
+### Summary
+All the models performed better using a 0.3 threshold, as we're using the *Recall* and *F1 Score* as the main metrics. A summary showing the results of all 3 models are represented in the following table:
 
+| Model | Accuracy | Precision | Recall | F1 Score |
+| :---: | :------: | :-------: | :----: | :------: |
+| Logistic Regression | 76.71% | 54.38% | 76.43% | 63.55% |
+| Decision Tree | 76.14% | 53.91% | 70.18% | 60.98% |
+| Random Forest | 77.23% | 55.63% | 70.54% | 62.2% |
+
+The three models got similar results, for every metric we used. But the *Logistic Regression* algorithm performed slightly better, as the *Recall* got higher than others, as well as the *F1 Score*. 
+
+## Conclusion
+The *Logistics Regression* algorithm performed better than others, therefore should be used in this case. For a company that never have did *Churn Analytics*, a model that predict with a *Recall* above 75% is quite good. From 100 customers that would leave the company, imagine that the company retained 75 of them, this is extremely relevant for the company, as well for its profits.  
+Every company should be doing Data Science, *Churn Analytics* it's only a piece from an universe of possibilites to help the company and theirs customers, and this project showed exactly that.
