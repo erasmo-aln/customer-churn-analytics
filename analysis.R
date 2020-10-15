@@ -1,5 +1,5 @@
-setwd("C:/Users/Erasmo/OneDrive/Projects/customer-churn-analytics")
-getwd()
+# Set your directory
+# setwd("...")
 
 library(readr)
 library(plyr)
@@ -7,6 +7,7 @@ library(ggplot2)
 library(caret)
 library(party)
 library(randomForest)
+library(gridExtra)
 
 # Import dataset
 dataset <- read_csv(file="Telco-Customer-Churn.csv")
@@ -20,18 +21,15 @@ na_values
 na_clean <- na_values$TotalCharges
 dataset <- dataset[-c(na_clean), ]
 
-# Dataset without NA values
-View(dataset)
-
 # Remove CustomerID column
 dataset <- dataset[-1]
 
-# Change values of SeniorCitizen to the pattern
-dataset$SeniorCitizen <- as.factor(mapvalues(dataset$SeniorCitizen, # plyr
+# Change SeniorCitizen values to keep the pattern
+dataset$SeniorCitizen <- as.factor(mapvalues(dataset$SeniorCitizen,
                                              from=c(0, 1),
                                              to=c("No", "Yes")))
 
-# Change tenure values to categorical
+# Tenure Analysis
 ggplot(dataset, aes(x=as.factor(tenure), fill=Churn)) +
   xlab('') +
   ylab('') +
@@ -43,6 +41,7 @@ ggplot(dataset, aes(y=tenure, x="", fill=Churn)) +
   ylab('Tenure') +
   geom_boxplot()
 
+# Change tenure variable from numerical to categorical
 tvalues <- dataset$tenure
 tvalues[tvalues < 12] <- "< 1 year"
 tvalues[tvalues >= 12 & tvalues < 24] <- "1-2 years"
@@ -52,7 +51,7 @@ tvalues[tvalues >= 48 & tvalues < 60] <- "4-5 years"
 tvalues[tvalues >= 60] <- "> 5 years"
 dataset$tenure <- tvalues
 
-# Tenure categories
+# Create the ordered factor to help later
 tenure_levels <- c("< 1 year", "1-2 years", "2-3 years", "3-4 years",
                   "4-5 years", "> 5 years")
 tenure_factor <- ordered(as.factor(dataset$tenure), 
@@ -63,7 +62,7 @@ ggplot(dataset, aes(x=tenure_factor, fill=Churn)) +
   xlab("") +
   ylab("")
 
-# Analyze gender
+# Gender Analysis
 ggplot(dataset, aes(y=gender, fill=Churn)) +
   geom_bar(position='fill', col='black') +
   xlab('') +
@@ -76,7 +75,7 @@ ggplot(dataset, aes(x=tenure_factor, fill=Churn)) +
   ylab('') +
   labs(fill="Churn")
 
-# Analyze SeniorCitizen
+# SeniorCitizen Analysis
 count(dataset$SeniorCitizen)
 table(dataset$SeniorCitizen, dataset$tenure)
 
@@ -91,7 +90,7 @@ ggplot(dataset, aes(x=tenure_factor, fill=Churn)) +
   xlab('') +
   ylab('')
 
-# Analyze Family (Partner and Dependents)
+# Family (Partner and Dependents) Analysis
 count(dataset$Partner)
 table(dataset$Partner, dataset$tenure)
 
@@ -129,7 +128,7 @@ ggplot(dataset, aes(x=Churn, fill=Dependents)) +
   xlab('') +
   ylab('')
 
-# Analyze PhoneService and MultipleLines
+# PhoneService and MultipleLines Analysis
 count(dataset$PhoneService)
 ggplot(dataset, aes(y=PhoneService, fill=Churn)) +
   geom_bar(position='fill', col='black') +
@@ -142,7 +141,7 @@ ggplot(dataset, aes(y=MultipleLines, fill=Churn)) +
   xlab('') +
   ylab('')
 
-# Analyze InternetService
+# InternetService Analysis
 table(dataset$InternetService, dataset$Churn)
 
 ggplot(dataset, aes(x=InternetService, fill=Churn)) +
@@ -153,16 +152,16 @@ ggplot(dataset, aes(x=InternetService, fill=Churn)) +
   ylab('')
 
 # Analyze columns related to Internet Services
-library(gridExtra)
-
 cols <- seq(9, 14)
 for (i in cols){
   print(table(dataset[, c(i, 20)]))
 }
 
+# Subset to analyze Internet Services
 new_df <- dataset[, c(9:14, 20)]
 new_long <- tidyr::gather(new_df, key = type_col, value = categories, -Churn)
 
+# Subset showing Internet Services just for the first year
 first_year_df <- dataset[dataset$tenure == "< 1 year", c(9:14, 20)]
 first_year_long <- tidyr::gather(first_year_df, key = type_col, value = categories, -Churn)
 
@@ -174,7 +173,7 @@ ggplot(first_year_long, aes(x = categories, fill = Churn)) +
   geom_bar(position='dodge', col='black') + 
   facet_wrap(~ type_col, scales = "free_x")
 
-# Analyzing Contract
+# Contract Analysis
 ggplot(dataset, aes(x=Contract, fill=Churn)) +
   geom_bar(position='dodge', col='black') +
   facet_grid(~ordered(as.factor(dataset$tenure), 
@@ -182,7 +181,7 @@ ggplot(dataset, aes(x=Contract, fill=Churn)) +
   xlab('') +
   ylab('')
 
-# Analyze Paperless Billing
+# Paperless Billing Analysis
 ggplot(dataset, aes(x=PaperlessBilling, fill=Churn)) +
   geom_bar(position='fill', col='black') +
   facet_grid(~ordered(as.factor(dataset$tenure), 
@@ -190,7 +189,7 @@ ggplot(dataset, aes(x=PaperlessBilling, fill=Churn)) +
   xlab('') +
   ylab('')
 
-# Analyze Payment Method
+# Payment Method Analysis
 ggplot(dataset, aes(x=PaymentMethod, fill=Churn)) +
   geom_bar(position='fill', col='black') +
   facet_grid(~ordered(as.factor(dataset$tenure), 
@@ -199,13 +198,12 @@ ggplot(dataset, aes(x=PaymentMethod, fill=Churn)) +
   xlab('') +
   ylab('')
 
-# Analyze Charges
+# Charges Analysis
 ggplot(dataset, aes(x=MonthlyCharges, y=TotalCharges, color=tenure_factor)) +
   geom_point() +
   xlab('') +
   ylab('') +
   labs(color='Tenure Category')
-
 
 ggplot(dataset, aes(x=MonthlyCharges, fill=Churn)) +
   geom_histogram(bins=20, col='black') +
@@ -213,49 +211,48 @@ ggplot(dataset, aes(x=MonthlyCharges, fill=Churn)) +
             levels=tenure_levels), scales="free_x") +
   labs(fill="Churn")
 
-View(dataset)
-
-# See Correlations between categories and Churn
+# Correlations between categories and Churn (Chi-Squared test)
 cols <- seq(1:17)
-results <- data.frame(Column=character(), `X-Squared`=double(),
+chisq_results <- data.frame(Column=character(), `X-Squared`=double(),
                       `p-value`=double(), stringsAsFactors = FALSE)
 for (j in cols){
-  coluna <- colnames(dataset[j])
+  col <- colnames(dataset[j])
   teste <- chisq.test(as.factor(dataset[[j]]), as.factor(dataset[["Churn"]]))
-  results[j, ] <- c(coluna, teste[1], teste[3])
+  chisq_results[j, ] <- c(col, teste[1], teste[3])
 }
 
-View(results)
+View(chisq_results)
 
-# Build Machine Learning models
+# Deleting irrelevant columns
 dataset$TotalCharges <- NULL
 dataset$gender <- NULL
 dataset$PhoneService <- NULL
 dataset$MultipleLines <- NULL
 
+# Convert 'character' columns to 'factor'
 cols <- c(2:14)
 for (k in cols){
   dataset[[k]] <- as.factor(dataset[[k]])
 }
 
+# Churn columns needs to be numerical (0 or 1)
 dataset$Churn <- as.factor(mapvalues(dataset$Churn,
                                              from=c("No", "Yes"),
                                              to=c(0, 1)))
 
+# Split train/test data
 intrain <- createDataPartition(as.factor(dataset$Churn), p=0.7, list=FALSE) #caret
 train <- dataset[c(intrain), ]
 test <- dataset[c(-intrain), ]
 
-  # Logistic Regression
+# Logistic Regression
 lr <- glm(Churn ~ ., family=binomial(link='logit'), data=train)
-print(summary(lr))
 
 preds_lr <- predict(lr, newdata=test, type='response')
-preds_lr <- ifelse(preds_lr > 0.3, 1, 0)
+preds_lr <- ifelse(preds_lr > 0.3, 1, 0) # Change the threshold here to experiment
 
 wrong_preds <- mean(preds_lr != test$Churn)
 confusion_lr <- table(Actual=test$Churn, Predicted=preds_lr)
-confusion_lr
 
 lr_acc <- signif((1-wrong_preds)*100, digits=4)
 lr_rec <- signif((confusion_lr[4]/(confusion_lr[2] + confusion_lr[4]))*100, digits=4)
@@ -267,26 +264,16 @@ results_lr <- data.frame(Model='Logistic Regression',
                          Precision=lr_pre,
                          Recall=lr_rec,
                          `F1 Score`=lr_f1)
+results_lr
 
-print(paste('LR Accuracy: ', lr_acc, '%', sep=""))
-print(paste('LR Precision: ', lr_pre, '%', sep=''))
-print(paste('LR Recall: ', lr_rec, '%', sep=''))
-print(paste('LR F1 Score: ', lr_f1, '%', sep=''))
-
-print("Confusion Matrix Para Logistic Regression"); confusion_lr
-
-  # Decision Tree
+# Decision Tree
 tree <- ctree(Churn ~ ., train) #party
-plot(tree, type='simple')
 
 preds_tree <- predict(tree, test, type='p')
-preds_tree <- sapply(preds_tree, `[`, 2)
-preds_tree <- ifelse(preds_tree > 0.5, 1, 0)
-
-View(preds_tree)
+preds_tree <- sapply(preds_tree, `[`, 2) # The predictions give us 2 values, we need only the p-value (second one)
+preds_tree <- ifelse(preds_tree > 0.3, 1, 0) # Change threshold here
 
 confusion_tree <- table(Actual = test$Churn, Predicted = preds_tree)
-confusion_tree
 
 tree_acc <- signif((sum(diag(confusion_tree))/sum(confusion_tree))*100, digits=4)
 tree_rec <- signif((confusion_tree[4]/(confusion_tree[2] + confusion_tree[4]))*100, digits=4)
@@ -299,17 +286,27 @@ results_tree <- data.frame(Model='Decision Tree',
                            Precision=tree_pre,
                            `F1 Score`=tree_f1)
 results_tree
-  # Random Forest
+
+# Random Forest
 rf <- randomForest(Churn ~ ., data = train)
-preds_rf <- predict(rf, test)
+
+preds_rf <- predict(rf, test, type='p')
+preds_rf <- as.data.frame(preds_rf)$`1` 
+preds_rf <- ifelse(preds_rf > 0.3, 1, 0)
 
 confusion_rf <- table(Predicted=preds_rf, Actual=test$Churn)
-rf_acc <- sum(diag(confusion_rf))/sum(confusion_rf)
-print(paste('Random Forest Accuracy: ', signif(rf_acc*100, 4), '%', sep=''))
 
-varImpPlot(rf, sort=T, n.var = 10, main = 'Top 10 Feature Importance')
+rf_acc <- signif((sum(diag(confusion_rf))/sum(confusion_rf))*100, digits=4)
+rf_rec <- signif((confusion_rf[4]/(confusion_rf[2] + confusion_rf[4]))*100, digits=4)
+rf_pre <- signif((confusion_rf[4]/(confusion_rf[3] + confusion_rf[4]))*100, digits=4)
+rf_f1 <- signif((2*(rf_pre*rf_rec)/(rf_pre + rf_rec)), digits=4)
 
-print("Summary")
-print(paste('Logistic Regression Accuracy: ', signif((1-wrong_preds)*100, digits=4),'%', sep=""))
-print(paste('Decision Tree Accuracy: ', signif(tree_acc*100, digits=4), '%', sep=''))
-print(paste('Random Forest Accuracy: ', signif(rf_acc*100, 4), '%', sep=''))
+results_rf <- data.frame(Model='Random Forest',
+                         Accuracy=rf_acc,
+                         Recall=rf_rec,
+                         Precision=rf_pre,
+                         `F1 Score`=rf_f1)
+results_rf
+
+final_results <- data.frame(rbind(results_lr, results_tree, results_rf))
+View(final_results)
