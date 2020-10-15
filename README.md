@@ -274,4 +274,3 @@ The three models got similar results, for every metric we used. But the *Logisti
 ## Conclusion
 The *Logistics Regression* algorithm performed better than others, therefore should be used in this case. For a company that never have did *Churn Analytics*, a model that predict with a *Recall* above 75% is quite good. From 100 customers that would leave the company, imagine that the company retained 75 of them, this is extremely relevant for the company, as well for its profits.  
 Every company should be doing Data Science, *Churn Analytics* it's only a piece from an universe of possibilites to help the company and theirs customers, and this project showed exactly that.  
-[Go back to the top](#understanding-the-data)
