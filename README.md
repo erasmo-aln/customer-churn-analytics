@@ -95,34 +95,34 @@ We still can see the negative trend across the categories, but it is now clearer
 This section will focus on those columns related to customer's information, which are: **gender**, **SeniorCitizen**, **Partner** and **Dependents**.
 
 #### Gender
-The column **gender** has 2 possible values: *Male* or *Female*. The image below shows the churn rate for each gender:
-![gender churn](images/gender_churn.png)
-Apparently, there are no differences between the customer's gender. Let's analyze gender's churn rate grouped by tenure:
-![gender tenure](images/gender_tenure.png)
+The column **gender** has 2 possible values: *Male* or *Female*. The image below shows the churn rate for each gender:  
+![gender churn](images/gender_churn.png)  
+Apparently, there are no differences between the customer's gender. Let's analyze gender's churn rate grouped by tenure:  
+![gender tenure](images/gender_tenure.png)  
 There are very few differences between them, concluding that **gender** is not a significant factor to determine if the customer will leave or not the company.
 
 #### Senior Citizen
-The churn rate if the customer is Senior or not is represented in the image below:
-![senior churn](images/senior_churn.png)
-Seeing that, we can see the difference between them, which indicates that this column could be useful to predict if the customer will leave or not. But this alone doesn't tell us too much, we need to analyze related to tenure too.
-![senior tenure](images/senior_tenure.png)
+The churn rate if the customer is Senior or not is represented in the image below:  
+![senior churn](images/senior_churn.png)  
+Seeing that, we can see the difference between them, which indicates that this column could be useful to predict if the customer will leave or not. But this alone doesn't tell us too much, we need to analyze related to tenure too.  
+![senior tenure](images/senior_tenure.png)  
 According to this image, the churn rate of senior customers in the first year is above 62%, followed by more than 50% in the second year, which is really bad. The company definitely should investigate this issue.
 
 #### Partner
-Let's take a look in the **Partner** distribution:
-![partner churn](images/partner_churn.png)
-We can see a difference there, saying that customers that don't have a partner tends to leave more than those who do. But we can't conclude that just because of this plot. Let's see that column grouped by tenure:
-![partner tenure](images/partner_tenure.png)
-Apparently, both situations are equally distributed across tenure, what indicates differences in quantity. Maybe there are more customers that don't have a partner within first year of service. Plotting this:
-![partner quantity](images/partner_quantity.png)
+Let's take a look in the **Partner** distribution:  
+![partner churn](images/partner_churn.png)  
+We can see a difference there, saying that customers that don't have a partner tends to leave more than those who do. But we can't conclude that just because of this plot. Let's see that column grouped by tenure:  
+![partner tenure](images/partner_tenure.png)  
+Apparently, both situations are equally distributed across tenure, what indicates differences in quantity. Maybe there are more customers that don't have a partner within first year of service. Plotting this:  
+![partner quantity](images/partner_quantity.png)  
 Looking at this plot, we can see that in the first year, there are more customers without a partner, as we suspected. Therefore, this can add bias to our model in the predictive modeling because nothing but distribution indicates that having a partner or not affects the churn rate. Instead, this only supports the importance of **tenure** to churn.  
 *Obs: pay attention to the legend. The last plot is filled by Partner, not Churn.*
 
 #### Dependents
-The distribution in the **Dependents** column is:
-![dep churn](images/dep_churn.png)
-Again, customers that don't have dependents tend to leave more often. But this can be a difference in quantity again. Let's check it:
-![dep quantity](images/dep_quantity.png)
+The distribution in the **Dependents** column is:  
+![dep churn](images/dep_churn.png)  
+Again, customers that don't have dependents tend to leave more often. But this can be a difference in quantity again. Let's check it:  
+![dep quantity](images/dep_quantity.png)  
 The same thing that happened with **Partner**'s column, happens here: the 2 classes aren't well distributed throughout the tenure. The problem is that we know that **tenure** is significant to determine if the customer churn or not, so based on this difference in quantity on those 2 columns, this can lead to a error, when the model gives to much weight to these columns, when is the tenure that is affecting the churn.  
 In the predictive modeling step, we should keep an eye to these columns (**Partner** and **Dependents**) to see if we can improve accuracy deleting them.
 
@@ -137,23 +137,23 @@ The following table shows the distribution of the **PhoneServices** column:
 | Yes | 6352 | 90.33% |
 | No | 680 | 9.67% |
 
-This column is highly unbalanced, but the churn rate for each value is basically equal, as we can see in the image below:
-![phone churn](images/phone_churn.png)
-Let's check the **MultipleLines** distribution:
-![multi churn](images/multiple.png)
+This column is highly unbalanced, but the churn rate for each value is basically equal, as we can see in the image below:  
+![phone churn](images/phone_churn.png)  
+Let's check the **MultipleLines** distribution:  
+![multi churn](images/multiple.png)  
 Basically, the same thing happened here, having or not these services don't affect that much in the churn rate. Again, those are 2 columns that could be excluded later.
 
 ### Internet Services
-This section will analyze every Internet Services in the dataset, from **OnlineSecurity** to **StreamingMovies**. Starting with the presence or not of Internet Service, we have this distribution:
-![internet tenure](images/internet_tenure.png)
+This section will analyze every Internet Services in the dataset, from **OnlineSecurity** to **StreamingMovies**. Starting with the presence or not of Internet Service, we have this distribution:  
+![internet tenure](images/internet_tenure.png)  
 Clearly, we can see that the *fiber optic* service has a problem, given the highest churn rate in all categories. If that behavior had happened only in the first year, probably would be a quantity issue again. But it repeats all over tenure categories, therefore having fiber optic definitely impacts on the churn outcome.  
 Also, customers that don't have any internet services have the lowest churn rate. Now we need to verify that churn rate across all services related to internet.
 
 #### Online Security to Streaming Movies
-The following plot shows the distribution of all these services:
-![internet services tenure](images/iserv_churn.png)
-Again, we can see that customers that don't have internet service have the lowest churn rate, in contrast to those that have internet but don't have separated services. But we can't take conclusion yet, because this can be a higher quantity of customers within the first year that don't have these services yet. Let's check for it:
-![first internet](images/first_internet.png)
+The following plot shows the distribution of all these services:  
+![internet services tenure](images/iserv_churn.png)  
+Again, we can see that customers that don't have internet service have the lowest churn rate, in contrast to those that have internet but don't have separated services. But we can't take conclusion yet, because this can be a higher quantity of customers within the first year that don't have these services yet. Let's check for it:  
+![first internet](images/first_internet.png)  
 Indeed, all services have more customers within the first year, but that alone doesn't explain why customers that haven't these services tends to leave the company. The churn rate for this category (customers that don't have these services) is above 50% for every service. Apparently, customers that have these services or don't have internet at all tends to stay in the company. That could be a solution to this problem: the company could offer these services for a lower price for those customers, trying to retain them.  
 And for the fiber optic service, definitely the company should investigate that to improve it or fix any problems.
 
@@ -162,26 +162,26 @@ This section will focus on payment methods and bill related variables, from **Co
 
 #### Contract
 There are 3 options of contracts: *month-to-month*, *one year* and *two year*. Let's see how it is distributed:
-![contract tenure](images/contract.png)
+![contract tenure](images/contract.png)  
 According to this plot, we can see that more the customer is in the company, he tends to sign *two year* contracts, and the churn rate are much lower. Also, a high quantity of customers in the first year tends to sign the monthly contract, what makes sense.  
 But this column looks more like a consequence than a cause to the churn problem. The dataset contains more newer customers and newer clients tends to leave more often, so the kind of contract it's just a consequence. One thing that supports that, it is the fast decrease on churn rate in the second year. But, just for precaution, it's not bad to investigate these customers and their services.
 
 #### Paperless Billing
-There are a option to have paperless billing or not, plotting this distribution grouped by tenure:
-![paperless tenure](images/paperless_tenure.png)
+There are a option to have paperless billing or not, plotting this distribution grouped by tenure:  
+![paperless tenure](images/paperless_tenure.png)  
 According to this image, every tenure category has the same behavior: customers that have paperless billing tends to leave more often than those who haven't. So, definitely this is a variable we want to keep.
 
 #### Payment Method
-There are 4 kinds of payment methods: *Bank transfer (automatic)*, *Credit card (automatic)*, *Electronic check* and *Mailed check*. They are evenly distributed, except for *electronic check* which has a little more customers. The image below shows the distribution filled by **Churn**:
-![payment method](images/paymentmethod.png)
+There are 4 kinds of payment methods: *Bank transfer (automatic)*, *Credit card (automatic)*, *Electronic check* and *Mailed check*. They are evenly distributed, except for *electronic check* which has a little more customers. The image below shows the distribution filled by **Churn**:  
+![payment method](images/paymentmethod.png)  
 Where *BT* are *Bank transfer*, *CC* is *Credit Card*, *EC* is *Electronic Check* and *MC* is *Mailed Check*. It is visible that customers that have *electronic check* as their payment method, also have the highest churn rate in every tenure category, which should be a significant factor to predict the **Churn**. The other methods are very similar, except for *Mailed Check* that has the lowest churn rate. 
 
 ### Charges Analysis
-This section will focus on the 2 numerical columns: **MonthlyCharges** and **TotalCharges**. The scatter plot below shows the relationship between the monthly charges and total charges:
-![charges](images/charges.png)
+This section will focus on the 2 numerical columns: **MonthlyCharges** and **TotalCharges**. The scatter plot below shows the relationship between the monthly charges and total charges:  
+![charges](images/charges.png)  
 We can see different 'columns' on that scatterplot showing some different service plans. Also, we can see a linear relationship between the variables, that is, when monthly charges increases, total charges also increases in a linear manner, the same occurs with time: increasing tenure time, also increases the total charges.  
-Therefore, if these 2 variables are related to each other, that makes no sense to keep them together. **MonthlyCharges** apparently represents better the customer's behavior, so **TotalCharges** will be deleted. The image below shows the distribution of monthly charges:
-![monthly charges](images/monthlycharges.png)
+Therefore, if these 2 variables are related to each other, that makes no sense to keep them together. **MonthlyCharges** apparently represents better the customer's behavior, so **TotalCharges** will be deleted. The image below shows the distribution of monthly charges:  
+![monthly charges](images/monthlycharges.png)  
 This histogram shows interesting behaviors. It's visible that the churn rate is high in every facet when the charges 'moves' to the right (becomes more expensive). In the first year, this range is between 60 and 90, becoming between 90 and 110 after 5 years in the company. Maybe this is related to additional services, that we saw that could be causing this churn. Anyway, this is an specific range and should be investigated for sure.
 
 ### Chi-Squared Test
